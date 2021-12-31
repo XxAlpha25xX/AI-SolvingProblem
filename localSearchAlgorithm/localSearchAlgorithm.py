@@ -2,6 +2,9 @@ import numpy as np
 from numpy.core.fromnumeric import shape
 from Error import ErrorCodex as err
 from Scoring import Score as score
+import random
+
+MAX_ITER = 1000
 
 class LocalSearchAlgorithm():
 
@@ -27,22 +30,20 @@ class LocalSearchAlgorithm():
         try:
             arr = [np.copy(iS)]
             maxima = False
+            iterations = 0
 
             while maxima == False:
                 if self.isGoodPuzzle(iS) : self.err.IncorrectNumpyShape(iS.shape, self.expectedShape)
-                #print("Initial State\n", iS)
                 moves = self.getSwapPossibility(iS)
-                #print("Moves\n",moves)
                 searchSpace = self.createAllSwapPossibility(iS, moves)
-                #print(searchSpace.shape)
-                #print(searchSpace)
                 searchSpace = searchSpace.reshape(-1, iS.shape[0], iS.shape[0])
-                #print("SearchSpace\n",searchSpace)
                 i = self.sumManhatanDistance(searchSpace)
-                iS = searchSpace[np.argmin(i)]
+                index = [e for e in range(0, len(i)) if i[e] == i[np.argmin(i)]]
+                iS = searchSpace[random.choice(index)]
                 if i[np.argmin(i)] == 0: maxima = True
-                elif self.isStuck(arr, iS): maxima = True
+                elif iterations > MAX_ITER: maxima = True
                 else: arr.append(np.copy(iS))
+                iterations += 1
             arr.append(np.copy(iS))
             return iS, arr
         except Exception as e: print(e)

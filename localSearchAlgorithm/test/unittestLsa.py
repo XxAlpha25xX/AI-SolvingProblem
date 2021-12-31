@@ -39,8 +39,12 @@ class LocalSearchAlgorithmTest(unittest.TestCase):
         np.testing.assert_array_equal(res,self.solved8Puzzle)
     def test_basic3(self):
         res , history = self.lsa.hillClimbing(iS=self.ex8Puzzle03)
-        #print(history)
+        self.printHistory(history)
         np.testing.assert_array_equal(res,self.solved8Puzzle)
+    
+    def printHistory(self, history):
+        for tmp in history:
+            print(tmp)
 
 if __name__ == '__main__':
     unittest.main()
