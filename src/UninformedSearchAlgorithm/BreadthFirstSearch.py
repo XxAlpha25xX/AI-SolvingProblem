@@ -25,12 +25,11 @@ class BreadthFirstSearch():
         s = iS.shape[0]
 
         self._goal = np.append(np.arange(1,s * s), 0).reshape(s, s)
-        self._queue = np.append(self._queue, np.copy(iS)).astype(int).reshape(-1, iS.shape[0], iS.shape[0])
+        self._queue = np.append(self._queue, np.copy(iS)).astype(int).reshape(-1, s, s)
         while res is None:
             res = self.visitTopQueue()
             i += 1
-            if i >= MAX_ITER:
-                res = np.array([])
+            if i >= MAX_ITER: res = np.array([])
         return res, self._visitedNode
 
     
@@ -38,8 +37,7 @@ class BreadthFirstSearch():
         try:
             if len(self._queue) == 0: self._err.BFSQueueEmpty()
             top = self._queue[0]
-            if self.checkSolved(top):
-                return top
+            if self.checkSolved(top): return top
             self._visitedNode = np.append(self._visitedNode, top).reshape(-1, 3, 3) #Add the top to visited node
             self.addChildrenToQueue(top)
             self._queue = np.delete(self._queue, 0, axis=0) # Remove the top of the queue            
