@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import sys
 #print(sys.path)
-sys.path.append('../')
+sys.path.append('../src/LocalSearchAlgorithm/.')
 from localSearchAlgorithm import LocalSearchAlgorithm
 
 class LocalSearchAlgorithmTest(unittest.TestCase):
@@ -39,7 +39,7 @@ class LocalSearchAlgorithmTest(unittest.TestCase):
         np.testing.assert_array_equal(res,self.solved8Puzzle)
     def test_basic3(self):
         res , history = self.lsa.hillClimbing(iS=self.ex8Puzzle03)
-        self.printHistory(history)
+        #self.printHistory(history)
         np.testing.assert_array_equal(res,self.solved8Puzzle)
     
     def printHistory(self, history):
