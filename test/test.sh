@@ -1,1 +1,2 @@
-green TestLsa.py -vvv 
+green TestHillClimbing.py -vvv 
+green TestBFS.py -vvv 

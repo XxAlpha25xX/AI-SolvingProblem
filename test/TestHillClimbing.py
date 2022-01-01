@@ -3,13 +3,13 @@ import numpy as np
 import sys
 #print(sys.path)
 sys.path.append('../src/LocalSearchAlgorithm/.')
-from localSearchAlgorithm import LocalSearchAlgorithm
+from HillClimbing import HillClimbing
 
-class LocalSearchAlgorithmTest(unittest.TestCase):
+class HillClimbingTest(unittest.TestCase):
 
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName=methodName)
-        self.lsa = LocalSearchAlgorithm()
+        self.hc = HillClimbing()
         self.solved8Puzzle = np.array([
             [1, 2, 3],
             [4, 5, 6],
@@ -28,17 +28,17 @@ class LocalSearchAlgorithmTest(unittest.TestCase):
         self.ex8Puzzle03 = np.array([
             [1, 2, 3],
             [4, 0, 6],
-            [5, 7, 8]
+            [7, 5, 8]
         ])
 
-    def test_basic1(self):
-        res , history = self.lsa.hillClimbing(iS=self.ex8Puzzle01)
+    def test_hillClimbingBasic01(self):
+        res , history = self.hc.hillClimbing(iS=self.ex8Puzzle01)
         np.testing.assert_array_equal(res,self.solved8Puzzle)
-    def test_basic2(self):
-        res , history = self.lsa.hillClimbing(iS=self.ex8Puzzle02)
+    def test_hillClimbingBasic02(self):
+        res , history = self.hc.hillClimbing(iS=self.ex8Puzzle02)
         np.testing.assert_array_equal(res,self.solved8Puzzle)
-    def test_basic3(self):
-        res , history = self.lsa.hillClimbing(iS=self.ex8Puzzle03)
+    def test_hillClimbingIntermediate(self):
+        res , history = self.hc.hillClimbing(iS=self.ex8Puzzle03)
         #self.printHistory(history)
         np.testing.assert_array_equal(res,self.solved8Puzzle)
     

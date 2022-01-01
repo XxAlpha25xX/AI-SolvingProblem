@@ -4,9 +4,7 @@ import os
 #print(sys.path)
 
 LIB_PATH = os.path.abspath(os.getcwd()) + '/../lib/'
-print(LIB_PATH)
 sys.path.append(LIB_PATH)
-from numpy.core.fromnumeric import shape
 from Error import ErrorCodex as Err
 from Scoring import Score as Score
 from Puzzle import Puzzle as Puzzle
@@ -14,7 +12,7 @@ import random
 
 MAX_ITER = 1000
 
-class LocalSearchAlgorithm():
+class HillClimbing():
 
     # [blank] -- Init
     def __init__(self):
@@ -22,10 +20,6 @@ class LocalSearchAlgorithm():
         self._err = Err()
         self._score = Score()
         self._puzzle = Puzzle()
-    
-    # [bool] -- Check if it's a 8Puzzle or 24Puzzle
-    def isGoodPuzzle(self, iS: np.array) -> bool:
-        return not(iS.shape == (3, 3) or iS.shape == (5, 5))
     
     # [bool] -- Check if stuck
     def isStuck(self, arr, iS: np.array) -> bool:
@@ -40,13 +34,14 @@ class LocalSearchAlgorithm():
             arr = [np.copy(iS)]
             maxima = False
             iterations = 0
+            size = iS.shape[0]
 
             while maxima == False:
-                if self.isGoodPuzzle(iS) : self._err.IncorrectNumpyShape(iS.shape, self.expectedShape)
+                if self._puzzle.isGoodPuzzle(iS) : self._err.IncorrectNumpyShape(iS.shape, self.expectedShape)
                 moves = self._puzzle.getSwapPossibility(iS)
                 searchSpace = self._puzzle.createAllSwapPossibility(iS, moves)
-                searchSpace = searchSpace.reshape((-1, iS.shape[0], iS.shape[0]))
-                i = self.sumManhatanDistance(searchSpace)
+                searchSpace = searchSpace.reshape((-1, size, size))
+                i = self._puzzle.sumManhatanDistance(searchSpace, size)
                 index = [e for e in range(0, len(i)) if i[e] == i[np.argmin(i)]]
                 iS = searchSpace[random.choice(index)]
                 if i[np.argmin(i)] == 0: maxima = True
@@ -56,16 +51,3 @@ class LocalSearchAlgorithm():
             arr.append(np.copy(iS))
             return iS, arr
         except Exception as e: print(e)
-        
-    def sumManhatanDistance(self, lst: np.array):
-        arr = []
-        for p in lst:
-            score = 0
-            pc = np.copy(p)
-            for i in range(1, 9, 1):
-                item = self._puzzle.findTileNumber(pc, i)
-                goal = (abs(((i- 1) % 3)), abs(int((i - 1) / pc.shape[0])) )
-                s = self._score.manhatanDistance(item, goal)
-                score += s
-            arr.append(score)
-        return arr
