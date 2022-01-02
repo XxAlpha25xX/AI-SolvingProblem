@@ -41,7 +41,6 @@ class Puzzle():
             iSc = np.copy(iS)
             tmp = self.swapCasePuzzle(iSc, blank, elem)
             arr = np.append(arr, tmp)
-#        arr = arr[arr != None]
         return arr
 
     #[tuple(int, int)] -- Return position of specific number in the puzzle -- the empty space is a zero
@@ -58,15 +57,29 @@ class Puzzle():
             self._err.NoTileNumber(nb)
         except Exception as e: print(e)
 
+    #[] -- 
     def sumManhatanDistance(self, lst: np.array, shape):
         arr = []
         for p in lst:
             score = 0
             pc = np.copy(p)
-            for i in range(1, shape * 3, 1):
+            for i in range(1, shape * shape, 1):
                 item = self.findTileNumber(pc, i)
-                goal = (abs(((i- 1) % 3)), abs(int((i - 1) / pc.shape[0])) )
+                goal = (abs(((i- 1) % shape)), abs(int((i - 1) / pc.shape[0])) )
                 s = self._score.manhatanDistance(item, goal)
                 score += s
+            arr.append(score)
+        return arr
+    
+    def countMisplacedTile(self, lst: np.array, shape):
+        arr = []
+        for p in lst:
+            score = 0
+            pc = np.copy(p)
+            for i in range(1, shape * shape, 1):
+                item = self.findTileNumber(pc, i)
+                goal = (abs(((i- 1) % shape)), abs(int((i - 1) / pc.shape[0])))
+                s = self._score.manhatanDistance(item, goal)
+                if s > 0: score += 1
             arr.append(score)
         return arr

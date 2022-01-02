@@ -21,12 +21,11 @@ class HillClimbing():
         self._score = Score()
         self._puzzle = Puzzle()
     
-    # [bool] -- Check if stuck
-    def isStuck(self, arr, iS: np.array) -> bool:
-        if np.array_equal(iS, arr[len(arr) - 1]):
-            return True
-        if len(arr) >= 2 and np.array_equal(iS, arr[len(arr) - 2]):
-            return True
+    def initVar(self, iS: np.array):
+        self.size = iS.shape[0]
+        self.shape = (self.size, self.size)
+        self.arrayShape = (-1, self.size, self.size)
+        self.len = self.size * self.size
 
     # [np.array] -- Try to find the local maxima
     def hillClimbing(self, iS: np.array) -> np.array:
@@ -36,11 +35,12 @@ class HillClimbing():
             iterations = 0
             size = iS.shape[0]
 
+            self.initVar(iS)
             while maxima == False:
                 if self._puzzle.isGoodPuzzle(iS) : self._err.IncorrectNumpyShape(iS.shape, self.expectedShape)
                 moves = self._puzzle.getSwapPossibility(iS)
                 searchSpace = self._puzzle.createAllSwapPossibility(iS, moves)
-                searchSpace = searchSpace.reshape((-1, size, size))
+                searchSpace = searchSpace.reshape(self.arrayShape)
                 i = self._puzzle.sumManhatanDistance(searchSpace, size)
                 index = [e for e in range(0, len(i)) if i[e] == i[np.argmin(i)]]
                 iS = searchSpace[random.choice(index)]
