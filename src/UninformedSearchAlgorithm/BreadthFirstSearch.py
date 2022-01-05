@@ -25,7 +25,7 @@ class BreadthFirstSearch():
         self.arrayShape = (-1, self.size, self.size)
         self.len = self.size * self.size
 
-    def engine(self, iS: np.array) -> np.array:
+    def enginePuzzle(self, iS: np.array) -> np.array:
         i = 0
         res = None
 

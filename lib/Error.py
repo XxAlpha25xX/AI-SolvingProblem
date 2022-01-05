@@ -17,3 +17,8 @@ class ErrorCodex():
     def BFSQueueEmpty(self):
         message = "[Error] The BFS queue is empty\n" 
         raise Exception(message)
+    
+    def NoQueenFound(self, pos):
+        inputStr = '(' + ','.join([str(e) for e in pos]) + ')'
+        message = "[Error] The queen was not found at " + inputStr + "\n" 
+        raise Exception(message)

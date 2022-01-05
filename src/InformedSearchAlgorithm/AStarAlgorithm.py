@@ -12,13 +12,6 @@ from Error import ErrorCodex as Error
 
 MAX_ITER = 10000
 
-# 1) Etape 1 - Prendre la state initial
-
-# 2) Etape 2 - Verifier les
-
-# 3) Etape 3 - 
-
-
 class AStarAlgorithm():
     def __init__(self) -> None:
         self._visitedNode = np.array([])
@@ -33,7 +26,7 @@ class AStarAlgorithm():
         self.arrayShape = (-1, self.size, self.size)
         self.len = self.size * self.size
 
-    def engine(self, iS: np.array) -> np.array:
+    def enginePuzzle(self, iS: np.array) -> np.array:
         i = 0
         res = None
         self.initVar(iS)
