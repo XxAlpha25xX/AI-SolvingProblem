@@ -35,7 +35,7 @@ class HillClimbingTest(unittest.TestCase):
             [7, 5, 8]
         ])
         
-        self.ex8Queen04 = np.array([
+        self.exnQueen04 = np.array([
                     [1, 1, 1, 1, 1, 1, 1, 1],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -46,7 +46,7 @@ class HillClimbingTest(unittest.TestCase):
                     [0, 0, 0, 0, 0, 0, 0, 0],
                 ])
 
-        self.ex8Queen03 = np.array([
+        self.exnQueen03 = np.array([
                     [1, 0, 0, 0, 0, 0, 0, 0],
                     [1, 0, 0, 0, 0, 0, 0, 0],
                     [1, 0, 0, 0, 0, 0, 0, 0],
@@ -57,19 +57,42 @@ class HillClimbingTest(unittest.TestCase):
                     [1, 0, 0, 0, 0, 0, 0, 0],
                 ])
 
-        self.ex8Queen01 = np.array([
+        self.exnQueen01 = np.array([
                     [0, 0, 0, 0],
                     [0, 0, 0, 0],
                     [0, 0, 0, 0],
                     [1, 1, 1, 1],        
         ])
 
-        self.ex8Queen02 = np.array([
+        self.exnQueen02 = np.array([
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [1, 1, 1, 1, 1],        
+        ])
+
+        self.exnQueen05 = np.array([
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
 
     def test_hillClimbingPuzzleBasic01(self):
@@ -85,22 +108,27 @@ class HillClimbingTest(unittest.TestCase):
         np.testing.assert_array_equal(res,self.solved8Puzzle)
     
     def test_hillClimbingQueenBasic01(self):
-        res , history = self.hc.engineQueen(board=self.ex8Queen01)
+        res , history = self.hc.engineQueen(board=self.exnQueen01)
         #self.printHistory(history)
         assert_equal(0, self.queen.sumScore([res]))
     
     def test_hillClimbingQueenBasic02(self):
-        res , history = self.hc.engineQueen(board=self.ex8Queen02)
+        res , history = self.hc.engineQueen(board=self.exnQueen02)
         #self.printHistory(history)
         assert_equal(0, self.queen.sumScore([res]))
     
     def test_hillClimbingQueenIntermediate01(self):
-        res , history = self.hc.engineQueen(board=self.ex8Queen03)
+        res , history = self.hc.engineQueen(board=self.exnQueen03)
         #self.printHistory(history)
         assert_equal(0, self.queen.sumScore([res]))
 
     def test_hillClimbingQueenIntermediate02(self):
-        res , history = self.hc.engineQueen(board=self.ex8Queen04)
+        res , history = self.hc.engineQueen(board=self.exnQueen04)
+        #self.printHistory(history)
+        assert_equal(0, self.queen.sumScore([res]))
+    
+    def test_hillClimbingQueenHARD01(self):
+        res , history = self.hc.engineQueen(board=self.exnQueen05)
         #self.printHistory(history)
         assert_equal(0, self.queen.sumScore([res]))
 
