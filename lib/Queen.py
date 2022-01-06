@@ -129,17 +129,15 @@ class Queen():
             size = board.shape[0]
             boardCpy = np.copy(board)
             queens = self.getAllQueenPosition(boardCpy)
-            n = []
 
             for queen in queens:
                 moves = self.getQueenMovePossibility(boardCpy, queen)
                 for move in moves:
                     possible = np.copy(self.moveQueenTo(boardCpy, move, queen).astype(int))
                     arr = np.append(arr, possible)
-                    n.append(move[1])
                     boardCpy = np.copy(board).astype(int)
             arr = arr.reshape((-1, size, size)).astype(int)
-            return arr, n
+            return arr
         except Exception as e: 
             print(e)
             return 84

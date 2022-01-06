@@ -71,7 +71,7 @@ class AStarAlgorithm():
 
     def f(self) -> int:
         h = self.h()
-        g = [1]
+        g = self.g()
         f = np.add(np.array(h), np.array(g))
         return f
 

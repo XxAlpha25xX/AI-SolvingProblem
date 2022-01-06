@@ -1,4 +1,4 @@
-from Node import Node
+
 import numpy as np
 import sys
 import os
@@ -6,6 +6,7 @@ import os
 
 LIB_PATH = os.path.abspath(os.getcwd()) + '/../lib/'
 sys.path.append(LIB_PATH)
+from Node import Node
 from Puzzle import Puzzle
 from Error import ErrorCodex as Error
 

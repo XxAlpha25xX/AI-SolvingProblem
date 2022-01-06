@@ -9,9 +9,9 @@ from Error import ErrorCodex as Err
 from Scoring import Score as Score
 from Puzzle import Puzzle as Puzzle
 from Queen import Queen as Queen
+from Node import Node as Node
+from Settings import Settings
 import random
-
-MAX_ITER = 100000
 
 class HillClimbing():
 
@@ -30,49 +30,32 @@ class HillClimbing():
         self.len = self.size * self.size
 
     # [np.array] -- Try to find the local maxima
-    def enginePuzzle(self, iS: np.array) -> np.array:
+    def engine(self, state: np.array, settings: Settings) -> np.array:
         try:
-            arr = [np.copy(iS)]
+            visited = np.array([state])
+            searchSpace = np.array([])
+            score = 0
             maxima = False
             iterations = 0
 
-            self.initVar(iS)
-            while maxima == False:
-                if self._puzzle.isGoodPuzzle(iS) : self._err.IncorrectNumpyShape(iS.shape, self.expectedShape)
-                moves = self._puzzle.getSwapPossibility(iS)
-                searchSpace = self._puzzle.createAllSwapPossibility(iS, moves)
-                searchSpace = searchSpace.reshape(self.arrayShape)
-                i = self._puzzle.sumManhatanDistance(searchSpace, self.size)
-                index = [e for e in range(0, len(i)) if i[e] == i[np.argmin(i)]]
-                iS = searchSpace[random.choice(index)]
-                if i[np.argmin(i)] == 0: maxima = True
-                elif iterations > MAX_ITER: maxima = True
-                else: arr.append(np.copy(iS))
-                iterations += 1
-            arr.append(np.copy(iS))
-            return iS, arr
-        except Exception as e: print(e)
-
-    # [np.array] -- Try to find the local maxima
-    def engineQueen(self, board: np.array) -> np.array:
-        try:
-            arr = [np.copy(board)]
-            maxima = False
-            iterations = 0
-            number = 0
-            
-            self.initVar(board)
-            while maxima == False:
-                searchSpace, n = self._queen.createAllMovePossible(board)
-                score = self._queen.sumScore(searchSpace)
+            if state.shape[0] != state.shape[1]: self._err.IncorrectNumpyShape()
+            self.initVar(state)
+            while not(maxima):
+                if settings.isPuzzle : searchSpace = self._puzzle.createAllSwapPossibility(state, self._puzzle.getSwapPossibility(state)).reshape(self.arrayShape)
+                elif settings.isQueen: searchSpace = self._queen.createAllMovePossible(state)
+                if not(settings.isGraph) and visited.shape[0] > 0:
+                    tmp = [i for i, search in enumerate(searchSpace) for state in visited if np.array_equal(state, search)]
+                    searchSpace = np.delete(searchSpace, tmp, axis=0).reshape(self.arrayShape)
+                if settings.isPuzzle : score = self._puzzle.sumManhatanDistance(searchSpace, self.size)
+                elif settings.isQueen: score = self._queen.sumScore(searchSpace)
                 index = [e for e in range(0, len(score)) if score[e] == score[np.argmin(score)]]
-                board = searchSpace[random.choice(index)]
-                if score[np.argmin(score)] == 0: maxima = True
-                elif iterations > MAX_ITER: maxima = True
-                else: arr.append(np.copy(board))
+                state = searchSpace[random.choice(index)]
+                visited = np.append(visited, state).reshape(self.arrayShape)
                 iterations += 1
-                number = (number + 1) % (self.size - 1); 
-            return board, arr
-        except Exception as e: print(e)
-    
-
+                if score[np.argmin(score)] == 0: maxima = True
+                elif iterations > settings.maxIter: maxima = True
+            return state, visited
+        except Exception as e: 
+            print("🧐[Error][Exceptions raised] ")
+            print(e)
+            return None, []
