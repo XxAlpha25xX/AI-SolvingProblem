@@ -4,6 +4,7 @@ import sys
 #print(sys.path)
 sys.path.append('../src/InformedSearchAlgorithm/.')
 from AStarAlgorithm import AStarAlgorithm
+from Settings import Settings
 
 class AStarTest(unittest.TestCase):
 
@@ -49,19 +50,25 @@ class AStarTest(unittest.TestCase):
 
 
     def test_AStarBasic01(self):
-        res , history = self.aS.enginePuzzle(iS=self.ex8Puzzle01)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
+        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
+        out = self.aS.enginePuzzle(state=self.ex8Puzzle01, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
+
     def test_AStarBasic02(self):
-        res , history = self.aS.enginePuzzle(iS=self.ex8Puzzle02)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
+        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
+        out = self.aS.enginePuzzle(state=self.ex8Puzzle02, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
+
     def test_AStarIntermediate01(self):
-        res , history = self.aS.enginePuzzle(iS=self.ex8Puzzle03)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
-    
+        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
+        out = self.aS.enginePuzzle(state=self.ex8Puzzle03, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
+
     def test_AStarIntermediate02(self):
-        res , history = self.aS.enginePuzzle(iS=self.ex24Puzzle01)
-        np.testing.assert_array_equal(res,self.solved24Puzzle)
-    
+        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
+        out = self.aS.enginePuzzle(state=self.ex24Puzzle01, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved24Puzzle)
+
     def printHistory(self, history):
         for tmp in history:
             print(tmp)

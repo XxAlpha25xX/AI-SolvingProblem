@@ -8,6 +8,7 @@ sys.path.append('../src/LocalSearchAlgorithm/.')
 from HillClimbing import HillClimbing
 from Queen import Queen
 from Settings import Settings
+from Output import Output
 
 
 class HillClimbingTest(unittest.TestCase):
@@ -46,7 +47,7 @@ class HillClimbingTest(unittest.TestCase):
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
-                ])
+        ])
 
         self.exnQueen03 = np.array([
                     [1, 0, 0, 0, 0, 0, 0, 0],
@@ -99,42 +100,42 @@ class HillClimbingTest(unittest.TestCase):
 
     def test_hillClimbingPuzzleBasic01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        res , history = self.hc.engine(state=self.ex8Puzzle01, settings=settings)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
+        out = self.hc.engine(state=self.ex8Puzzle01, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
     def test_hillClimbingPuzzleBasic02(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        res , history = self.hc.engine(state=self.ex8Puzzle03, settings=settings)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
+        out = self.hc.engine(state=self.ex8Puzzle03, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
 
     def test_hillClimbingPuzzleIntermediate(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        res , history = self.hc.engine(state=self.ex8Puzzle03, settings=settings)
-        np.testing.assert_array_equal(res,self.solved8Puzzle)
+        out = self.hc.engine(state=self.ex8Puzzle03, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved8Puzzle)
     
     def test_hillClimbingQueenBasic01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=True)
-        res , history = self.hc.engine(state=self.exnQueen01, settings=settings)
-        assert_equal(0, self.queen.sumScore([res]))
+        out = self.hc.engine(state=self.exnQueen01, settings=settings)
+        assert_equal(0, self.queen.sumScore([out.result]))
     
     def test_hillClimbingQueenBasic02(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=True)
-        res , history = self.hc.engine(state=self.exnQueen02, settings=settings)
-        assert_equal(0, self.queen.sumScore([res]))
+        out = self.hc.engine(state=self.exnQueen02, settings=settings)
+        assert_equal(0, self.queen.sumScore([out.result]))
     
     def test_hillClimbingQueenIntermediate01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=True)
-        res , history = self.hc.engine(state=self.exnQueen03, settings=settings)
-        assert_equal(0, self.queen.sumScore([res]))
+        out = self.hc.engine(state=self.exnQueen03, settings=settings)
+        assert_equal(0, self.queen.sumScore([out.result]))
 
     def test_hillClimbingQueenIntermediate02(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=True)
-        res , history = self.hc.engine(state=self.exnQueen04, settings=settings)
-        assert_equal(0, self.queen.sumScore([res]))
+        out = self.hc.engine(state=self.exnQueen04, settings=settings)
+        assert_equal(0, self.queen.sumScore([out.result]))
     
     def test_hillClimbingQueenHARD01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=True)
-        res , history = self.hc.engine(state=self.exnQueen05, settings=settings)
-        assert_equal(0, self.queen.sumScore([res]))
+        out = self.hc.engine(state=self.exnQueen05, settings=settings)
+        assert_equal(0, self.queen.sumScore([out.result]))
     
 
     def printHistory(self, history):
