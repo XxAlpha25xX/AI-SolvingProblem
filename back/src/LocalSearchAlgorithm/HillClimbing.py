@@ -58,7 +58,7 @@ class HillClimbing():
                     searchSpace = np.delete(searchSpace, tmp, axis=0).reshape(self.arrayShape)
                 #[Puzzle] -- Determine local maxima
                 if settings.isPuzzle : score = self._puzzle.sumManhatanDistance(searchSpace, self.size)
-                #[Queen] -- Determine local maxima                
+                #[Queen] -- Determine local maxima
                 elif settings.isQueen: score = self._queen.sumScore(searchSpace)
                 #[Algorithm] -- Pick random local maxima in order to avoid loop                
                 index = [e for e in range(0, len(score)) if score[e] == score[np.argmin(score)]]
