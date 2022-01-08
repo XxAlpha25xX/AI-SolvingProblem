@@ -23,31 +23,55 @@ def main():
     data = {"Ok": True}
     return formatResponse(app, data=data, code=200)
 
-@app.route("/solve", methods=['GET'])
-def nPuzzle():
+def guessProblem(problem: str, hardness: int, shuffle: int):
     architect = CreateBoard()
-    node = Node()
-    board = None
-    way = None
-    problem = request.args.get("problem")
-    hardness = request.args.get("nPuzzle")
-    shuffle = request.args.get("shuffle")
-    algo = request.args.get("algorithm")
-    tree = request.args.get("tree")
-    
-
-    if problem == "puzzle": 
-        board = architect.createPuzzle(int(hardness), int(shuffle))
-    if algo == "HillClimbing": 
-        way = HillClimbing()
+    obj = {
+        "puzzle": lambda hard, shuf: architect.createPuzzle(hard, shuf)
+    }
+    return obj[problem](hard=hardness, shuf=shuffle)
 
 
-    sett = Settings(isGraph=not(bool(tree)), maxIter=100000, isQueen=(problem == "queen"))
-    out = way.engine(state=board, settings=sett)
-    out.toList()
-    tmp = json.dumps(out, cls=OutputEncoder)
-    data = {"Ok": True, "stuff": json.loads(tmp)}
-    return formatResponse(app, data=data, code=200)
+def guessAlgo(algo: str):
+    obj = {
+        "HillClimbing": lambda : HillClimbing(),
+        "A*": lambda: AStarAlgorithm(),
+        "BreadthFirstSearch": lambda: BreadthFirstSearch()
+    }
+    return obj[algo]()
+
+def argToObj(request):
+    obj = {
+        "problem": request.args.get("problem"),
+        "hardness":int(request.args.get("nPuzzle")),
+        "shuffle" : int(request.args.get("shuffle")),
+        "algo" : request.args.get("algorithm"),
+        "mode": request.args.get("mode"),
+        "maxMove": int(request.args.get("maxMove"))
+    }
+    return obj
+
+@app.route("/solve", methods=['GET'])
+def solve():
+    try:
+        #[Http Get] -- gathering parameter
+        req = argToObj(request=request)
+
+        #[Board] -- Creation of the board and algorithm
+        board = guessProblem(req["problem"], req["hardness"], req["shuffle"])
+        way = guessAlgo(req["algo"])
+
+        #[Settings] -- Creation of settings based on Http request parameter
+        sett = Settings(isGraph=(req["mode"] == "graph"), maxIter=req["maxMove"], isQueen=(req["problem"] == "queen"))
+        out = way.engine(state=board, settings=sett)
+
+        #[Output] -- Format Output
+        out.toList()
+        tmp = json.dumps(out, cls=OutputEncoder)
+        data = {"Ok": True, "stuff": json.loads(tmp)}
+        return formatResponse(app, data=data, code=200)
+    except Exception as e:
+        data = {"Ok": False, "message": "🤷[Error] The request is bad", "Exception": str(e)}
+        return formatResponse(app, data=data, code=400)
 
 def formatResponse(app, data, code):
     return app.response_class(
