@@ -6,20 +6,20 @@
         <h3>- {Epitech}</h3>
       </div>
       <h1>Module - Artificial Intelligence: Problem solving</h1>
-      <div class="card card-one">
+      <NuxtLink to="/solve" class="card card-one">
         <div class="card-bg"></div>
         <img class="card-img" src="../assets/img/puzzle.jpg" />
         <div class="card-text">
           <p class="card-title">NPuzzle</p>
         </div>
-      </div>
-      <div class="card card-two">
+      </NuxtLink>
+      <NuxtLink to="/solve" class="card card-two">
         <div class="card-bg"></div>
         <img class="card-img" src="../assets/img/queen2.jpg" />
         <div class="card-text">
           <p class="card-title">NQueen</p>
         </div>
-      </div>
+      </NuxtLink>
       <div class="card card-three">
         <div class="card-bg"></div>
         <img class="card-img" src="../assets/img/brain.jpg" />
@@ -76,6 +76,7 @@ export default class Index extends Vue {
   }
 
   mounted () {
+    this.listenMouse()
     window.addEventListener('DOMContentLoaded', () => {
       this.listenMouse()
     })
