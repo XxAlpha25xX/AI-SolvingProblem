@@ -79,7 +79,7 @@ export default class Solve extends Vue {
   transcriptMode = (_:any): string| undefined => { return '' }
   currentState = []
   history = []
-  score = []
+  score :number[] = []
   game = {}
   tree = {}
   loading = false
