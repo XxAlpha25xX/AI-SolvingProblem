@@ -29,6 +29,22 @@
       <Input type="MaxMove" placeholder="Number " @updateValueInput="updateValueInput" />
       <Input type="Shuffle" placeholder="Number " @updateValueInput="updateValueInput" />
     </div>
+    <div class="buttons">
+      <Button type="paramButton" text="Go !" @onButtonClick="onButtonClick" />
+    </div>
+    <div v-if="loading" class="loader">
+      <Loading />
+    </div>
+    <div class="child-components">
+      <Puzzle v-if="settings.problem == 'NPuzzle'" :tile="currentState" />
+      <Queen v-if="settings.problem == 'NQueen'" :tile="currentState" />
+      <History :history="history" :score="score" @onClickHistory="onClickHistory" />
+    </div>
+    <div class="play-buttons">
+      <Button type="resetButton" text="⏮" @onButtonClick="onButtonClick" />
+      <Button type="playButton" text="▶️" @onButtonClick="onButtonClick" />
+      <Button type="pauseButton" text="⏸" @onButtonClick="onButtonClick" />
+    </div>
   </div>
 </template>
 
@@ -44,9 +60,9 @@ import {
 } from 'nuxt-property-decorator'
 
 interface Settings {
-  algo: string,
-  problem: string,
-  mode: string,
+  algo?: string,
+  problem?: string,
+  mode?: string,
   size: number,
   maxMove: number,
   shuffle: number
@@ -58,28 +74,60 @@ export default class Solve extends Vue {
   problemList = ['NPuzzle', 'NQueen']
   modeList = ['Tree', 'Graph']
   settings : Settings = { algo: '', problem: '', mode: '', size: 0, maxMove: 0, shuffle: 0 }
-  transcriptAlgo = (a:any) => {}
-  transcriptProblem = (a:any) => {}
-  transcriptMode = (a:any) => {}
-  transcriptAPM = (a:any, b: any) => {}
-  binderAPM = (a:any, b: any) => {}
+  transcriptAlgo = (_:any): string| undefined => { return '' }
+  transcriptProblem = (_:any): string| undefined => { return '' }
+  transcriptMode = (_:any): string| undefined => { return '' }
+  currentState = []
+  history = []
+  score = []
+  game = {}
+  tree = {}
+  loading = false
+  iState = 0
+  pause = false
 
+  // http://localhost:9010/solve?nPuzzle=24&shuffle=7&problem=puzzle&algorithm=HillClimbing&mode=graph&maxMove=56
   async fetchData () {
-    const res = await fetch('http://localhost:9010/solve?')
+    this.loading = true
+    const res = await fetch(`http://localhost:9010/solve?size=${this.settings.size}&shuffle=${this.settings.shuffle}&problem=${this.settings.problem}&algorithm=${this.settings.algo}&mode=${this.settings.mode}&maxMove=${this.settings.maxMove}`)
 
     res.json().then((tmp) => {
-
+      this.loading = false
+      console.log(tmp)
+      this.game = tmp
+      this.history = tmp.stuff.history
+      this.tree = tmp.stuff.tree
+      this.score = tmp.stuff.score
+      if (this.settings.algo === 'HillClimbing') {
+        this.score.unshift(this.score[0] + 1)
+      }
+      this.history.unshift()
+      this.currentState = this.history[1]
+      console.log(this.game)
+      console.log(this.tree)
     }).catch((err) => {
+      this.loading = false
       console.log(err)
     })
   }
 
   pick (value: string, type: string) {
-    this.transcriptAPM(value, type)(value)
+    if (type === 'algo') {
+      this.settings.algo = this.transcriptAlgo(value)
+    } else if (type === 'problem') {
+      this.settings.problem = this.transcriptProblem(value)
+    } else if (type === 'mode') {
+      this.settings.mode = this.transcriptMode(value)
+    }
   }
 
   updateValueInput (val: number, type: string) {
     if (type === 'Size') {
+      if (val === 0 || isNaN(val)) {
+        this.settings.size = 1
+        return
+      }
+      console.log(val)
       this.settings.size = val
     } else if (type === 'MaxMove') {
       this.settings.maxMove = val
@@ -87,6 +135,37 @@ export default class Solve extends Vue {
       this.settings.shuffle = val
     }
     console.log(this.settings)
+  }
+
+  onButtonClick (type: string) {
+    if (type === 'paramButton') {
+      this.fetchData()
+    } else if (type === 'resetButton') {
+      this.iState = 0
+      this.currentState = this.history[this.iState]
+    } else if (type === 'pauseButton') {
+      this.pause = true
+    } else if (type === 'playButton') {
+      this.pause = false
+    }
+  }
+
+  playState () {
+    setInterval(async () => {
+      if (!this.pause) {
+        this.iState += 1
+        this.currentState = this.history[this.iState]
+
+        if (this.iState > this.history.length - 1) {
+          this.pause = true
+          this.iState -= 1
+        }
+      }
+    }, 1 * 1000)
+  }
+
+  onClickHistory (i: number) {
+    this.currentState = this.history[i]
   }
 
   // Just wanted to try new stuff
@@ -104,11 +183,6 @@ export default class Solve extends Vue {
       Tree: 'Tree',
       Graph: 'Graph'
     })[mode]
-    this.transcriptAPM = (value: string, type : string) => ({
-      algo: (value: string) => { this.settings.algo = this.transcriptAlgo(value) },
-      problem: (value: string) => { this.settings.problem = this.transcriptProblem(value) },
-      mode: (value: string) => { this.settings.mode = this.transcriptMode(value) }
-    })[type]
   }
 
   initSettings () {
@@ -121,6 +195,7 @@ export default class Solve extends Vue {
   }
 
   mounted () {
+    this.playState()
     this.initTranscript()
     this.initSettings()
   }
@@ -128,6 +203,10 @@ export default class Solve extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
+  .global {
+    background: #F8F8F8;
+  }
   .top-buttons {
     margin-top: 20px;
     flex-grow: 1;
@@ -141,5 +220,38 @@ export default class Solve extends Vue {
       display: flex;
       justify-content: center;
     }
+  }
+
+  .buttons {
+    display: flex;
+    margin-top: 40px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .child-components {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loader {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    justify-content: center;
+    height: fit-content;
+    align-items: center;
+  }
+  .play-buttons {
+    width: 10%;
+    margin-left : auto;
+    margin-right: auto;
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    justify-content: space-around;
+    height: fit-content;
+    align-items: center;
   }
 </style>

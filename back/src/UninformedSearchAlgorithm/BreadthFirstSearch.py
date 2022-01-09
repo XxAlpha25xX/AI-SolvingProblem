@@ -27,9 +27,10 @@ class BreadthFirstSearch():
         self.arrayShape = (-1, self.size, self.size)
         self.len = self.size * self.size
 
-    def enginePuzzle(self, state: np.array, settings: Settings) -> np.array:
+    def engine(self, state: np.array, settings: Settings) -> np.array:
         i = 0
         res = None
+        self.sL = []
         self._visitedNode = np.array([])
         self._queue = np.array([])
         tree = {"id": self._node.npToString(state), "children": []} #
@@ -42,12 +43,14 @@ class BreadthFirstSearch():
             res = self.visitTopQueue(tree, graph, settings)
             i += 1
             if i >= settings.maxIter: res = np.array([])
-        return Output(res=res, history=self._visitedNode, settings=settings, graph=graph, tree=tree)
+        self._visitedNode = np.append(self._visitedNode, res).reshape(self.arrayShape)
+        return Output(res=res, history=self._visitedNode, settings=settings, graph=graph, tree=tree, score=self._puzzle.sumManhatanDistance(self._visitedNode, self.size))
 
     def visitTopQueue(self, tree: dict, graph: dict, settings: Settings) -> None:
         try:
             if len(self._queue) == 0: self._err.BFSQueueEmpty()
             top = self._queue[0]
+            self.sL.append(np.argmin(self.h()))
             if self.checkSolved(top): return top
             self._visitedNode = np.append(self._visitedNode, top).reshape(self.arrayShape) #Add the top to visited node
             self.addChildrenToQueue(top, tree, graph, settings)
@@ -56,6 +59,9 @@ class BreadthFirstSearch():
         except Exception as e:
             print(e)
             return 84
+
+    def h(self) -> int:
+        return self._puzzle.sumManhatanDistance(self._queue, self.size)
     
     def addChildrenToQueue(self, state: np.array, tree: dict, graph: dict, settings: Settings):
         if self._puzzle.isGoodPuzzle(state) : self._err.IncorrectNumpyShape(state.shape, self.expectedShape)

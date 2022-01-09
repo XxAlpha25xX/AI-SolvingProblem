@@ -26,6 +26,11 @@ class CreateBoard():
             arr = searchSpace[random.choice(index)]
             visited = np.append(arr, visited).reshape(self.arrayShape)
         return arr
+    
+    def createQueen(self, size):
+        arr = np.append(np.zeros(size * (size - 1)), np.ones(size))
+        np.random.shuffle(arr)
+        return arr.reshape(size, size).astype(int)
 
 
 cb = CreateBoard()

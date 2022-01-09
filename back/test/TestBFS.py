@@ -32,19 +32,39 @@ class BFSTest(unittest.TestCase):
             [7, 5, 8]
         ])
 
+        self.solved24Puzzle = np.array([
+            [1,  2,  3,  4,   5],
+            [6,  7,  8,  9,  10],
+            [11, 12, 13, 14, 15],
+            [16, 17, 18, 19, 20],
+            [21, 22, 23, 24, 0],
+        ])
+        self.ex24Puzzle01 = np.array([
+            [1,  2,  3,  4,   5],
+            [6,  12,  7,  9,  10],
+            [0, 11, 8, 13, 15],
+            [16, 17, 18, 14, 19],
+            [21, 22, 23, 24, 20],
+        ])
+
     def test_BreadthFirstSearchBasic01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.bfs.enginePuzzle(state=self.ex8Puzzle01, settings=settings)
+        out = self.bfs.engine(state=self.ex8Puzzle01, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
     def test_BreadthFirstSearchBasic02(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.bfs.enginePuzzle(state=self.ex8Puzzle02, settings=settings)
+        out = self.bfs.engine(state=self.ex8Puzzle02, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
-    def test_BreadthFirstSearchIntermediate(self):
+
+    def test_AStarIntermediate01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.bfs.enginePuzzle(state=self.ex8Puzzle03, settings=settings)
+        out = self.bfs.engine(state=self.ex8Puzzle03, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
-    
+
+    def test_AStarIntermediate02(self):
+        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
+        out = self.bfs.engine(state=self.ex24Puzzle01, settings=settings)
+        np.testing.assert_array_equal(out.result,self.solved24Puzzle)
     def printHistory(self, history):
         for tmp in history:
             print(tmp)

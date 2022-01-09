@@ -27,22 +27,25 @@ class AStarAlgorithm():
         self.arrayShape = (-1, self.size, self.size)
         self.len = self.size * self.size
 
-    def enginePuzzle(self, state: np.array, settings: Settings) -> Output:
+    def engine(self, state: np.array, settings: Settings) -> Output:
         res = None
         i = 0
         self._visitedNode = np.array([])
+        self._visited = np.array([])
         self._queue = np.array([])
         self.initVar(state)
         self._goal = np.append(np.arange(1,self.len), 0).reshape(self.shape)
         self._queue = np.append(self._queue, np.copy(state)).astype(int).reshape(self.arrayShape)
         tree = {"id": self._node.npToString(state), "children": []}
         graph = {"nodes" : [{"id":self._node.npToString(state)}], "links": []}
-
+        
         while res is None:
             res = self.visitTopQueue(tree, graph, settings)
             i += 1
             if i >= settings.maxIter: res = np.array([])
-        return Output(res=res, history=self._visitedNode.astype(int).reshape(self.arrayShape), settings=settings, graph=graph, tree=tree)
+        self._visitedNode = np.append(self._visitedNode, res).reshape(self.arrayShape)
+        self._visited = np.append(self._visited, res).reshape(self.arrayShape)
+        return Output(res=res, history=self._visited.astype(int).reshape(self.arrayShape), settings=settings, graph=graph, tree=tree, score=self._puzzle.sumManhatanDistance(self._visited, self.size))
 
     
     def visitTopQueue(self, tree: dict, graph: dict, settings: Settings) -> None:
@@ -51,11 +54,12 @@ class AStarAlgorithm():
             top = self.pickBestQueue()
             if self.checkSolved(top): return top
             self._visitedNode = np.append(self._visitedNode, top).reshape(self.arrayShape) #Add the top to visited node
+            self._visited = np.append(self._visited, top).reshape(self.arrayShape) #Add the top to visited node
             self.addChildrenToQueue(top, tree, graph, settings)
             return None
         except Exception as e: 
             print(e)
-            return 84
+            return np.array([])
 
     def pickBestQueue(self) -> np.array:
         self._queue = self._queue.reshape(self.arrayShape)
@@ -102,5 +106,3 @@ class AStarAlgorithm():
 
     def checkSolved(self, state: np.array) -> bool:
         return np.array_equal(self._goal, state)
-
-#print(json.dumps(out, indent=4, cls=OutputEncoder))

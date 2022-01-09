@@ -1,10 +1,12 @@
+from numpy.core.defchararray import array
 from Settings import Settings
 import json
 from json import  JSONEncoder
 
 
 class Output():
-    def __init__(self, res, history, settings: Settings, graph:dict, tree:dict) -> None:
+    def __init__(self, res, history, settings: Settings, graph:dict, tree:dict, score:list) -> None:
+        self.score = score
         self.result = res
         self.history = history
         self.settings = settings

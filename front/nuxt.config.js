@@ -13,6 +13,14 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      {
+        type: 'module',
+        src: 'https://d3js.org/d3.v7.min.js',
+        async: false,
+        crossorigin: 'anonymous'
+      }
     ]
   },
 
@@ -23,6 +31,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: '~node_modules/d3/dist/d3.js', ssr: false}
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -40,5 +49,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    standalone: true
   }
 }

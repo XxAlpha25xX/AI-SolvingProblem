@@ -41,6 +41,7 @@ class HillClimbing():
             graph = {"nodes" : [{"id":self._node.npToString(state)}], "links": []}
             searchSpace = np.array([])
             score = 0
+            sL = []
             maxima = False
             iterations = 0
 
@@ -75,10 +76,11 @@ class HillClimbing():
                 #[Algorithm] -- Check if already solves
                 if score[np.argmin(score)] == 0: maxima = True
                 #[Algorithm] -- Check if maximum moves have been reached
-                elif iterations > settings.maxIter: maxima = True
+                if iterations > settings.maxIter: maxima = True
+                sL.append(score[np.argmin(score)])
             #print(json.dumps(tree, indent=4))
             #print(json.dumps(graph, indent=4))
-            return Output(res=state, history=visited, settings=settings, graph=graph, tree=tree)
+            return Output(res=state, history=visited, settings=settings, graph=graph, tree=tree, score=sL)
         except Exception as e: 
             print("🧐[Error][Exceptions raised]")
             print(e)

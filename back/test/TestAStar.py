@@ -51,22 +51,22 @@ class AStarTest(unittest.TestCase):
 
     def test_AStarBasic01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.aS.enginePuzzle(state=self.ex8Puzzle01, settings=settings)
+        out = self.aS.engine(state=self.ex8Puzzle01, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
 
     def test_AStarBasic02(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.aS.enginePuzzle(state=self.ex8Puzzle02, settings=settings)
+        out = self.aS.engine(state=self.ex8Puzzle02, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
 
     def test_AStarIntermediate01(self):
         settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.aS.enginePuzzle(state=self.ex8Puzzle03, settings=settings)
+        out = self.aS.engine(state=self.ex8Puzzle03, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved8Puzzle)
 
     def test_AStarIntermediate02(self):
-        settings = Settings(isGraph=False, maxIter=100000, isQueen=False)
-        out = self.aS.enginePuzzle(state=self.ex24Puzzle01, settings=settings)
+        settings = Settings(isGraph=False, maxIter=1000, isQueen=False)
+        out = self.aS.engine(state=self.ex24Puzzle01, settings=settings)
         np.testing.assert_array_equal(out.result,self.solved24Puzzle)
 
     def printHistory(self, history):
