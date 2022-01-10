@@ -2,8 +2,17 @@
   <div class="container">
     <div v-if="history.length > 0" class="mb">
       <div v-for="h in (history.length - 1)" :key="h" class="case-container">
-        <div class="case" @click="onClickHistory(h)">
-          Move - {{ h }} - { {{ score[h] }} }
+        <div v-if="h == i" class="case green" @click="onClickHistory(h)">
+          <p>Move - {{ h }}</p>
+          <div class="score">
+            {{ score[h] }}
+          </div>
+        </div>
+        <div v-else class="case" @click="onClickHistory(h)">
+          <p>Move - {{ h }}</p>
+          <div class="score">
+            {{ score[h] }}
+          </div>
         </div>
       </div>
     </div>
@@ -23,11 +32,14 @@ import {
 
 @Component
 export default class history extends Vue {
-  @Prop({ default: [] })
+  @Prop({ default: () => { return [] } })
     history!: []
 
-  @Prop({ default: [] })
+  @Prop({ default: () => { return [] } })
     score!: []
+
+  @Prop({ default: 0 })
+    i!: number
 
   mounted () {
     window.addEventListener('DOMContentLoaded', () => {
@@ -68,21 +80,48 @@ export default class history extends Vue {
       width: 100%;
       display: flex;
       align-items: center;
+      flex-direction: row;
       justify-content: center;
 
       .case {
         background: white;
+        display: flex;
+        flex-direction: row;
+        color: gray;
         border-radius: 3px;
-        color: #6300ff;
+        background: white;
         width: 90%;
-        margin: 15px 0px;
+        margin: 15px 20px;
         font-size:35px;
         padding: 10px;
         transition: 0.2s all;
+        justify-content: space-between;
+        align-items: center;
         cursor: pointer;
 
+        p {
+          height: fit-content;
+        }
+
+        .score {
+          color: #6300ff;
+          width: fit-content;
+          height: 50px;
+          width: 50px;
+          overflow: hidden;
+          padding : 5px;
+          position: relative;
+          display: flex;
+          border-color: #6300ff;
+          border-radius: 3px;
+          border-style: solid;
+          border-width: 3px;
+          background: white;
+          justify-content: center;
+        }
+
         &:hover {
-          background: #3d009e;
+          background: #536bf57f;
           color: white;
           transform: scale(0.98);
         }
@@ -92,6 +131,17 @@ export default class history extends Vue {
           background: rgb(0, 90, 192);
         }
       }
+    }
+  }
+
+  .green {
+    background: #3d009e !important;
+    color: white !important;
+
+    .score {
+      color: rgb(9, 165, 22) !important;
+      border-color: rgb(9, 165, 22) !important;
+
     }
   }
 

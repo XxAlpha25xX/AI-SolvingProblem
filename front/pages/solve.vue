@@ -35,15 +35,19 @@
     <div v-if="loading" class="loader">
       <Loading />
     </div>
+    <div v-if="error" class="loader" >
+      <Error :text="errorText" />
+    </div>
     <div class="child-components">
       <Puzzle v-if="settings.problem == 'NPuzzle'" :tile="currentState" />
       <Queen v-if="settings.problem == 'NQueen'" :tile="currentState" />
-      <History :history="history" :score="score" @onClickHistory="onClickHistory" />
+      <History :history="history" :score="score" :i="iState" @onClickHistory="onClickHistory" />
     </div>
     <div class="play-buttons">
       <Button type="resetButton" text="⏮" @onButtonClick="onButtonClick" />
       <Button type="playButton" text="▶️" @onButtonClick="onButtonClick" />
       <Button type="pauseButton" text="⏸" @onButtonClick="onButtonClick" />
+      <Button type="solutionButton" text="🏁" @onButtonClick="onButtonClick" />
     </div>
   </div>
 </template>
@@ -77,14 +81,16 @@ export default class Solve extends Vue {
   transcriptAlgo = (_:any): string| undefined => { return '' }
   transcriptProblem = (_:any): string| undefined => { return '' }
   transcriptMode = (_:any): string| undefined => { return '' }
-  currentState = []
-  history = []
+  currentState: number[][] = []
+  history: number[][][] = []
   score :number[] = []
   game = {}
   tree = {}
   loading = false
   iState = 0
   pause = false
+  error = false
+  errorText = ''
 
   // http://localhost:9010/solve?nPuzzle=24&shuffle=7&problem=puzzle&algorithm=HillClimbing&mode=graph&maxMove=56
   async fetchData () {
@@ -92,21 +98,30 @@ export default class Solve extends Vue {
     const res = await fetch(`http://localhost:9010/solve?size=${this.settings.size}&shuffle=${this.settings.shuffle}&problem=${this.settings.problem}&algorithm=${this.settings.algo}&mode=${this.settings.mode}&maxMove=${this.settings.maxMove}`)
 
     res.json().then((tmp) => {
-      this.loading = false
-      console.log(tmp)
-      this.game = tmp
-      this.history = tmp.stuff.history
-      this.tree = tmp.stuff.tree
-      this.score = tmp.stuff.score
-      if (this.settings.algo === 'HillClimbing') {
-        this.score.unshift(this.score[0] + 1)
+      if (tmp.Ok) {
+        this.loading = false
+        console.log(tmp)
+        this.iState = 1
+        this.pause = true
+        this.game = tmp
+        this.history = tmp.stuff.history
+        this.tree = tmp.stuff.tree
+        this.score = tmp.stuff.score
+        this.score.unshift(42)
+        if (this.settings.algo === 'HillClimbing') {
+          this.score.unshift(this.score[0] + 1)
+        }
+        this.history.unshift([])
+        this.currentState = this.history[1]
+      } else {
+        this.loading = false
+        this.error = true
+        this.errorText = tmp.message
       }
-      this.history.unshift()
-      this.currentState = this.history[1]
-      console.log(this.game)
-      console.log(this.tree)
     }).catch((err) => {
       this.loading = false
+      this.error = true
+      this.errorText = err
       console.log(err)
     })
   }
@@ -127,26 +142,38 @@ export default class Solve extends Vue {
         this.settings.size = 1
         return
       }
-      console.log(val)
       this.settings.size = val
     } else if (type === 'MaxMove') {
       this.settings.maxMove = val
     } else if (type === 'Shuffle') {
       this.settings.shuffle = val
     }
-    console.log(this.settings)
   }
 
   onButtonClick (type: string) {
+    this.error = false
     if (type === 'paramButton') {
-      this.fetchData()
+      if (this.settings.problem === 'NQueen' && (this.settings.algo !== 'HillClimbing')) {
+        this.error = true
+        this.errorText = '🤷[Error] - Not implemented yet !'
+      } else {
+        this.error = false
+        if (this.settings.shuffle === 0) {
+          this.settings.shuffle = 1
+        }
+        this.fetchData()
+      }
     } else if (type === 'resetButton') {
-      this.iState = 0
+      this.iState = 1
       this.currentState = this.history[this.iState]
     } else if (type === 'pauseButton') {
       this.pause = true
     } else if (type === 'playButton') {
       this.pause = false
+    } else if (type === 'solutionButton') {
+      //this.pause = true
+      this.iState = this.history.length - 1
+      this.currentState = this.history[this.iState]
     }
   }
 
@@ -158,7 +185,8 @@ export default class Solve extends Vue {
 
         if (this.iState > this.history.length - 1) {
           this.pause = true
-          this.iState -= 1
+          this.iState = this.history.length - 1
+          this.currentState = this.history[this.iState]
         }
       }
     }, 1 * 1000)
@@ -166,6 +194,7 @@ export default class Solve extends Vue {
 
   onClickHistory (i: number) {
     this.currentState = this.history[i]
+    this.iState = i
   }
 
   // Just wanted to try new stuff
@@ -244,7 +273,7 @@ export default class Solve extends Vue {
     align-items: center;
   }
   .play-buttons {
-    width: 10%;
+    width: 15%;
     margin-left : auto;
     margin-right: auto;
     display: flex;

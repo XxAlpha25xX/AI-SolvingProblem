@@ -25,7 +25,7 @@ import {
 @Component
 export default class Puzzle extends Vue {
 
-  @Prop({ default: () => {return []}})
+  @Prop({ default: () => { return [] }})
     tile!: []
 
   trueSize: number = 0

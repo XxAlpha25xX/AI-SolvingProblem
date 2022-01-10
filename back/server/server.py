@@ -65,12 +65,13 @@ def solve():
         board = guessProblem(req["problem"], req["hardness"], req["shuffle"])
         way = guessAlgo(req["algo"])
 
-        print(board)
+        #print(board)
 
         #[Settings] -- Creation of settings based on Http request parameter
-        sett = Settings(isGraph=(req["mode"] == "graph"), maxIter=req["maxMove"], isQueen=(req["problem"] == "NQueen"))
+        sett = Settings(isGraph=(req["mode"] == "Graph"), maxIter=req["maxMove"], isQueen=(req["problem"] == "NQueen"))
+        print("[Server] -- Settings created, i will send the problem to the proper algorithm")
         out = way.engine(state=board, settings=sett)
-
+        print("[AI] -- Done, you can find my result below ... ")
         #[Output] -- Format Output
         out.toList()
         tmp = json.dumps(out, cls=OutputEncoder)
